@@ -1,13 +1,4 @@
 <template>
-<!--
-     <div style="flex-direction: column;">
-		<slider class="slider" interval="{{intervalValue}}" auto-play="{{isAutoPlay}}" >
-		  <div class="slider-pages" repeat="{{itemList}}" onclick="goWeexSite" >
-			<image class="thumb" src="{{pictureUrl}}"></image>
-			<text class="title">{{title}}</text>
-		  </div>
-		</slider>
--->
   <div class="container" onclick="goWeexSite" >
      <div style="flex-direction: column;">
 		<slider class="slider" interval="{{intervalValue}}" auto-play="{{isAutoPlay}}" >
