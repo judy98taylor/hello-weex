@@ -1,0 +1,260 @@
+<template>
+  <div>
+
+    <div class="m-live">
+      <video class="l-video" onstart="onstart" onpause="onpause" onfinish="onfinish" onfail="onfail"
+      auto-play="false" play-status="pause" src="{{liveSrc}}" style="width:750;height:422;"></video>
+      <div class="l-title">
+        <div class="lt-l">
+          <text class="ltl-t">红米4 直播发布会视频</text>
+          <text class="ltl-b">已有123342人围观</text>     
+        </div>
+        <div class="lt-r">
+          <text class="ltr-l" onclick="showMyPrize">我的奖品 ></text>
+          <text class="ltr-r" onclick="showRule">规则 ></text>
+      	</div>
+      </div>
+    </div>
+    	    	
+    <div class="m-comment">
+      <div class="c-board">
+      
+  <scroller if="{{marquee}}">
+<!--    <wxc-panel title="Marquee" type="primary">-->
+      <wxc-marquee id="marquee" style="width: 750; height: {{marquee.height * 10}}; border-radius: 8; padding-left: 30; padding-right: 30;" step="{{marquee.height * 2}}" count="{{marquee.list.length}}" interval="{{marquee.interval}}" duration="{{marquee.duration}}">
+        <div repeat="mqi in marquee.list" style="height: {{marquee.height * marquee.length}}; padding-top: {{marquee.height * 0.5}}; padding-bottom: {{marquee.height * 0.5}}; overflow: hidden;">
+         
+          <text style="height: {{marquee.height}}; color: #777; font-size: 28;">{{mqi.userId}}: {{mqi.text}}</text>
+        </div>
+      </wxc-marquee>
+<!--    </wxc-panel>-->
+  </scroller>
+     
+      </div>
+      <div class="c-comment">
+        <input
+         	id="cc-input"
+          class="cc-input"
+          oninput="commentInput"
+           type="text"
+           placeholder="发评论赢新品"
+           maxlength="40"
+           value="">
+        </input>
+
+        <text class="cc-btn" onclick="commentBtn">发表</text>
+      </div>
+    </div>
+
+
+    <div class="btn" onClick="alertMsg"><text style="text-align:center;">弹窗</text></div>
+		
+		<slider class="m-slider" interval="{{intervalValue}}" auto-play="{{isAutoPlay}}">
+			<image class="s-img" repeat="sli in sliderList" src="{{sli.src}}" onclick="goWeexSite"  id="sli-{{$index}}"></image>
+			<indicator class="indicator"></indicator>
+		</slider>
+
+    <div class="m-product-list2">
+      <div class="pl2-item" repeat="pli in productList" index="{{$index}}" id="pli-{{$index}}">
+        <image class="pl2i-img" src="{{pli.src}}" onclick="goTo"></image>
+      </div>
+    </div>
+
+
+		<list class="m-list">
+			<cell class="row" repeat="li in sliderList" index="{{$index}}" id="li-{{$index}}">
+				<image class="s-img" src="{{li.src}}"></image>
+			</cell>
+		</list>
+        
+        
+    
+    
+  </div>
+</template>
+<style>
+	.l-title{flex-direction:row;justify-content:space-between;background-color: #333;padding: 20px;}
+	.lt-l{flex-direction:column;align-content: center;align-self: center;}
+	.ltl-t{color:#ed702e;}
+	.ltl-b{color:#fff;}
+	.lt-r{flex-direction:row;}
+	.ltr-l{color: #ddd;padding: 20px;}
+	.ltr-r{color: #ddd;padding: 20px;}
+	
+	
+  .c-comment{flex-direction:row;justify-content:space-between;background-color: #eee;}
+  .cc-input{background-color: #fff;flex:3;font-size: 30px;margin: 20px;margin-right: 0;padding: 15px;border: 1px solid #ccc;}
+  .cc-btn{background-color: #ccc;flex:1;font-size: 30px;line-height: 60px;text-align: center;margin:20px;}
+  
+	.m-slider{width: 750px;height: 360px;flex-direction: row;}
+	.s-img{width: 750px;height: 360px;}
+	.indicator {width: 750px;height: 640px;item-color: #fff;item-selectedColor: #666;item-size: 20;}
+	
+	
+	
+	.m-product-list2{flex-direction:row;flex-wrap: wrap;align-content:space-around;padding-left: 10px;padding-bottom: 10px;}
+	.pl2-item{margin: 10px;margin-left: 0;margin-bottom: 0;}
+	.pl2i-img{width: 360px;height: 360px;}
+</style>
+<script>
+	
+	// 弹窗组件用
+	var modal = require('@weex-module/modal');
+	// 评论组件
+	require('weex-components');
+	
+  module.exports ={
+    data: {
+			currentComent:'',
+			marquee: {
+        height: 30,
+        duration: 1000,
+        interval: 1000,
+        list: [
+          {userId:'userId',text: 'Introducing Bots on Messenger'},
+          {userId:'userId',text: 'Capturing 3D 360-Stereo VR Video'},
+          {userId:'userId',text: 'The Future of Video on Facebook'},
+          {userId:'userId',text: 'Announcing Vue.js 2.0'},
+          {userId:'userId',text: 'Not Your Average Virtual-DOM'},
+          {userId:'userId',text: 'Templates, JSX, or Hyperscript?'}
+        ]
+      },
+			// slider
+			intervalValue:"1000",
+      isAutoPlay:"true",
+			sliderList:[
+				{
+					id:0,
+					src:'http://i3.mifile.cn/a4/0608ec18-7b33-4084-9804-53b6a6a5f6d5',
+					url:'http://m.mi.com/#/product/view?product_id=4093',
+				},
+				{
+					id:1,
+					src:'http://i3.mifile.cn/a4/73ff411f-6d09-4c92-93e1-166c5ad314d3',
+					url:'http://m.mi.com/#/product/view?product_id=3398',
+				},
+				{
+					id:2,
+					src:'http://i3.mifile.cn/a4/253718e4-2994-4134-a0b4-ad309e0474b9',
+					url:'http://m.mi.com/#/product/list?id=412',
+				}
+			],
+			
+			productList:[
+				{
+					id:0,
+					src:'http://i8.mifile.cn/v1/a1/e8a3d591-334d-4611-a87d-ee51e3211352.webp',
+					url:'http://m.mi.com/#/product/view?product_id=4093',
+				},
+				{
+					id:1,
+					src:'http://i8.mifile.cn/v1/a1/f43562e9-4e9f-4356-6f31-bb2fa3e4fffc.webp',
+					url:'http://m.mi.com/#/product/view?product_id=3398',
+				},
+				{
+					id:2,
+					src:'http://i8.mifile.cn/v1/a1/9f74cb9a-9857-610f-bbf8-97065a710385.webp',
+					url:'http://m.mi.com/#/product/list?id=412',
+				},
+				{
+					id:3,
+					src:'http://i8.mifile.cn/v1/a1/fe35933e-64af-dbee-57fb-c408e23e5ba9.webp',
+					url:'http://m.mi.com/#/product/list?id=384',
+				}
+			],
+      liveSrc:'http://flv2.bn.netease.com/videolib3/1611/01/XGqSL5981/SD/XGqSL5981-mobile.mp4'
+    },
+		created: function () {
+		},
+		ready: function() {
+      this.initMarquee('marquee');
+    },
+    methods:{
+			// popup
+			showMyPrize:function(){
+				modal.confirm({
+					message: '恭喜获得仙豆一枚~现在要领不？',
+					okTitle: '哇塞，这就去！',
+					cancelTitle: '哼，不稀罕~'
+				}, function(e) {
+//					console.log(e);
+					if(e==='哇塞，这就去！'){
+						modal.prompt({
+							message: '这时候跳填写信息页~略',
+							okTitle: '填完啦~',
+							cancelTitle: '懒得写。。'
+						}, function(e) {
+//							console.log(e);
+						});
+					}
+				});
+			},
+			showRule:function(){
+				modal.alert({
+					message: '活动规则balabala~',
+					okTitle: '这么长谁要看啊~'
+				}, function(e) {
+					console.log(e);
+				});
+			},
+			// comment
+			commentInput: function(e){
+				const self = this;
+				console.log(e);
+				self.currentComment=e.value;
+				
+			},
+			commentBtn: function(e){
+				const self = this;
+				
+				if(self.currentComment && self.currentComment.length>3 && self.currentComment.length<40){
+					self.marquee.list.push({userId:'我说',text: self.currentComment});
+					self.currentComment='';
+					console.log(self.$el('cc-input'));
+					
+					self.$el('cc-input').attr.value='';
+					console.log(self.$el('cc-input').attr.value);
+					
+				}else{
+    			modal.toast({ message: '评论要大于3个字小于40个字！' })
+				}
+			},
+			// 滚动评论组件
+			initMarquee: function(id) {
+        var self = this;
+				setInterval(function(){
+					self.marquee.list.push({userId:'userId',text: Math.random()});
+				},1000);
+				
+//        var $marquee = this.$vm(id);
+//        $marquee.$on('change', function() {
+//          console.log('marquee change');
+//        });
+				
+      },
+			// 弹窗组件
+			alertMsg: function (e) {
+				modal.alert({
+					message: '恭喜你，没中奖~哈哈哈',
+					okTitle: '好吧~'
+				}, function(e) {
+					console.log(e);
+				});
+			},
+			// 轮播跳转
+			goWeexSite: function (e) {
+//				this.$openURL('//alibaba.github.io/weex/');
+				console.log(e);
+				console.log(1);
+				
+			},
+			// 产品列表跳转
+			goTo:function(e){
+//				location='http://m.mi.com/';
+				console.log(e);
+			},
+
+    }
+  }
+
+</script>   
