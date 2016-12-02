@@ -7,7 +7,8 @@
       <div class="l-title">
         <div class="lt-l">
           <text class="ltl-t">红米4 直播发布会视频</text>
-          <text class="ltl-b">已有123342人围观</text>     
+          <text class="ltl-b" if="{{viewer>10000</te>}}">已有{{viewer}}人围观</text>     
+            
         </div>
         <div class="lt-r">
           <text class="ltr-l" onclick="showMyPrize">我的奖品 ></text>
@@ -15,7 +16,11 @@
       	</div>
       </div>
     </div>
+    	    
+    <div class="btn" onClick="toggle"><text style="text-align:center;background-color: #ddd;">toggle 实际人数{{viewer}}</text></div>
     	    	
+    	    		
+    	    				
     <div class="m-comment">
       <div class="c-board">
       
@@ -47,7 +52,6 @@
     </div>
 
 
-    <div class="btn" onClick="alertMsg"><text style="text-align:center;">弹窗</text></div>
 		
 		<slider class="m-slider" interval="{{intervalValue}}" auto-play="{{isAutoPlay}}">
 			<image class="s-img" repeat="sli in sliderList" src="{{sli.src}}" onclick="goWeexSite"  id="sli-{{$index}}"></image>
@@ -105,6 +109,9 @@
 	
   module.exports ={
     data: {
+			
+			viewer: 0,
+			
 			currentComent:'',
 			marquee: {
         height: 30,
@@ -232,14 +239,13 @@
 //        });
 				
       },
-			// 弹窗组件
-			alertMsg: function (e) {
-				modal.alert({
-					message: '恭喜你，没中奖~哈哈哈',
-					okTitle: '好吧~'
-				}, function(e) {
-					console.log(e);
-				});
+			// toggle
+			toggle: function (e) {
+				if(this.viewer>10000){
+					this.viewer=1234;
+				} else {
+					this.viewer=12345;
+				}
 			},
 			// 轮播跳转
 			goWeexSite: function (e) {

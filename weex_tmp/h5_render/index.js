@@ -123,8 +123,9 @@
 	                  "classList": [
 	                    "ltl-b"
 	                  ],
+	                  "shown": function () {return this.flag},
 	                  "attr": {
-	                    "value": "已有123342人围观"
+	                    "value": function () {return '已有' + (this.viewer) + '人围观'}
 	                  }
 	                }
 	              ]
@@ -162,6 +163,27 @@
 	              ]
 	            }
 	          ]
+	        }
+	      ]
+	    },
+	    {
+	      "type": "div",
+	      "classList": [
+	        "btn"
+	      ],
+	      "events": {
+	        "click": "toggle"
+	      },
+	      "children": [
+	        {
+	          "type": "text",
+	          "style": {
+	            "textAlign": "center",
+	            "backgroundColor": "#dddddd"
+	          },
+	          "attr": {
+	            "value": function () {return 'toggle 实际人数' + (this.viewer)}
+	          }
 	        }
 	      ]
 	    },
@@ -265,26 +287,6 @@
 	              }
 	            }
 	          ]
-	        }
-	      ]
-	    },
-	    {
-	      "type": "div",
-	      "classList": [
-	        "btn"
-	      ],
-	      "events": {
-	        "click": "alertMsg"
-	      },
-	      "children": [
-	        {
-	          "type": "text",
-	          "style": {
-	            "textAlign": "center"
-	          },
-	          "attr": {
-	            "value": "弹窗"
-	          }
 	        }
 	      ]
 	    },
@@ -497,6 +499,10 @@
 
 	module.exports = {
 		data: function () {return {
+
+			flag: false,
+			viewer: 0,
+
 			currentComent: '',
 			marquee: {
 				height: 30,
@@ -596,13 +602,14 @@
 				}, 1000);
 			},
 
-			alertMsg: function alertMsg(e) {
-				modal.alert({
-					message: '恭喜你，没中奖~哈哈哈',
-					okTitle: '好吧~'
-				}, function (e) {
-					console.log(e);
-				});
+			toggle: function toggle(e) {
+				if (this.viewer > 10000) {
+					this.viewer = 1234;
+					this.flag = false;
+				} else {
+					this.viewer = 12345;
+					this.flag = true;
+				}
 			},
 
 			goWeexSite: function goWeexSite(e) {
