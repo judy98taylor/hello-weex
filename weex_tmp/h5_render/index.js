@@ -114,6 +114,9 @@
 	                  "classList": [
 	                    "ltl-t"
 	                  ],
+	                  "events": {
+	                    "click": "redirect"
+	                  },
 	                  "attr": {
 	                    "value": "红米4 直播发布会视频"
 	                  }
@@ -123,7 +126,7 @@
 	                  "classList": [
 	                    "ltl-b"
 	                  ],
-	                  "shown": function () {return this.flag},
+	                  "shown": function () {return this.viewer>10000},
 	                  "attr": {
 	                    "value": function () {return '已有' + (this.viewer) + '人围观'}
 	                  }
@@ -271,7 +274,7 @@
 	                "type": "text",
 	                "placeholder": "发评论赢新品",
 	                "maxlength": "40",
-	                "value": ""
+	                "value": function () {return this.currentComment}
 	              }
 	            },
 	            {
@@ -500,15 +503,17 @@
 	module.exports = {
 		data: function () {return {
 
-			flag: false,
+			root: '',
+			items: [{ name: 'popup/rule', title: 'rule', url: '' }],
+
 			viewer: 0,
 
-			currentComent: '',
+			currentComment: '',
 			marquee: {
 				height: 30,
 				duration: 1000,
 				interval: 1000,
-				list: [{ userId: 'userId', text: 'Introducing Bots on Messenger' }, { userId: 'userId', text: 'Capturing 3D 360-Stereo VR Video' }, { userId: 'userId', text: 'The Future of Video on Facebook' }, { userId: 'userId', text: 'Announcing Vue.js 2.0' }, { userId: 'userId', text: 'Not Your Average Virtual-DOM' }, { userId: 'userId', text: 'Templates, JSX, or Hyperscript?' }]
+				list: []
 			},
 
 			intervalValue: "1000",
@@ -549,8 +554,11 @@
 		created: function created() {},
 		ready: function ready() {
 			this.initMarquee('marquee');
+			window.a = this;
 		},
 		methods: {
+			redirect: function redirect() {},
+
 			showMyPrize: function showMyPrize() {
 				modal.confirm({
 					message: '恭喜获得仙豆一枚~现在要领不？',
@@ -577,7 +585,6 @@
 
 			commentInput: function commentInput(e) {
 				var self = this;
-				console.log(e);
 				self.currentComment = e.value;
 			},
 			commentBtn: function commentBtn(e) {
@@ -586,10 +593,6 @@
 				if (self.currentComment && self.currentComment.length > 3 && self.currentComment.length < 40) {
 					self.marquee.list.push({ userId: '我说', text: self.currentComment });
 					self.currentComment = '';
-					console.log(self.$el('cc-input'));
-
-					self.$el('cc-input').attr.value = '';
-					console.log(self.$el('cc-input').attr.value);
 				} else {
 					modal.toast({ message: '评论要大于3个字小于40个字！' });
 				}
@@ -597,6 +600,7 @@
 
 			initMarquee: function initMarquee(id) {
 				var self = this;
+				var arr = [{ userId: 'userId', text: 'Introducing Bots on Messenger' }, { userId: 'userId', text: 'Capturing 3D 360-Stereo VR Video' }, { userId: 'userId', text: 'The Future of Video on Facebook' }, { userId: 'userId', text: 'Announcing Vue.js 2.0' }, { userId: 'userId', text: 'Not Your Average Virtual-DOM' }, { userId: 'userId', text: 'Templates, JSX, or Hyperscript?' }];
 				setInterval(function () {
 					self.marquee.list.push({ userId: 'userId', text: Math.random() });
 				}, 1000);
@@ -605,10 +609,8 @@
 			toggle: function toggle(e) {
 				if (this.viewer > 10000) {
 					this.viewer = 1234;
-					this.flag = false;
 				} else {
 					this.viewer = 12345;
-					this.flag = true;
 				}
 			},
 

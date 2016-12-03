@@ -6,8 +6,8 @@
       auto-play="false" play-status="pause" src="{{liveSrc}}" style="width:750;height:422;"></video>
       <div class="l-title">
         <div class="lt-l">
-          <text class="ltl-t">红米4 直播发布会视频</text>
-          <text class="ltl-b" if="{{viewer>10000</te>}}">已有{{viewer}}人围观</text>     
+          <text class="ltl-t" onclick="redirect">红米4 直播发布会视频</text>
+          <text class="ltl-b" if="{{viewer>10000}}">已有{{viewer}}人围观</text>     
             
         </div>
         <div class="lt-r">
@@ -44,7 +44,7 @@
            type="text"
            placeholder="发评论赢新品"
            maxlength="40"
-           value="">
+           value="{{currentComment}}">
         </input>
 
         <text class="cc-btn" onclick="commentBtn">发表</text>
@@ -110,21 +110,23 @@
   module.exports ={
     data: {
 			
+			root: '',
+			items: [
+        // FORMAT:
+        // `name` key is the example filename without '.we'
+        // Support sub directory, e.g. 'new-fashion/index'
+        {name: 'popup/rule', title: 'rule', url: ''}
+
+      ],
+			
 			viewer: 0,
 			
-			currentComent:'',
+			currentComment:'',
 			marquee: {
         height: 30,
         duration: 1000,
         interval: 1000,
-        list: [
-          {userId:'userId',text: 'Introducing Bots on Messenger'},
-          {userId:'userId',text: 'Capturing 3D 360-Stereo VR Video'},
-          {userId:'userId',text: 'The Future of Video on Facebook'},
-          {userId:'userId',text: 'Announcing Vue.js 2.0'},
-          {userId:'userId',text: 'Not Your Average Virtual-DOM'},
-          {userId:'userId',text: 'Templates, JSX, or Hyperscript?'}
-        ]
+        list: []
       },
 			// slider
 			intervalValue:"1000",
@@ -171,12 +173,16 @@
 			],
       liveSrc:'http://flv2.bn.netease.com/videolib3/1611/01/XGqSL5981/SD/XGqSL5981-mobile.mp4'
     },
-		created: function () {
-		},
+    created: function() {
+			 
+    },
 		ready: function() {
       this.initMarquee('marquee');
+			window.a = this;
     },
     methods:{
+			redirect: function() {
+      },
 			// popup
 			showMyPrize:function(){
 				modal.confirm({
@@ -207,7 +213,6 @@
 			// comment
 			commentInput: function(e){
 				const self = this;
-				console.log(e);
 				self.currentComment=e.value;
 				
 			},
@@ -217,11 +222,6 @@
 				if(self.currentComment && self.currentComment.length>3 && self.currentComment.length<40){
 					self.marquee.list.push({userId:'我说',text: self.currentComment});
 					self.currentComment='';
-					console.log(self.$el('cc-input'));
-					
-					self.$el('cc-input').attr.value='';
-					console.log(self.$el('cc-input').attr.value);
-					
 				}else{
     			modal.toast({ message: '评论要大于3个字小于40个字！' })
 				}
@@ -229,6 +229,14 @@
 			// 滚动评论组件
 			initMarquee: function(id) {
         var self = this;
+				let arr = [
+          {userId:'userId',text: 'Introducing Bots on Messenger'},
+          {userId:'userId',text: 'Capturing 3D 360-Stereo VR Video'},
+          {userId:'userId',text: 'The Future of Video on Facebook'},
+          {userId:'userId',text: 'Announcing Vue.js 2.0'},
+          {userId:'userId',text: 'Not Your Average Virtual-DOM'},
+          {userId:'userId',text: 'Templates, JSX, or Hyperscript?'}
+        ];
 				setInterval(function(){
 					self.marquee.list.push({userId:'userId',text: Math.random()});
 				},1000);
