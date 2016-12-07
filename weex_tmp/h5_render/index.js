@@ -68,7 +68,7 @@
 /***/ function(module, exports) {
 
 	module.exports = {
-	  "type": "div",
+	  "type": "scroller",
 	  "children": [
 	    {
 	      "type": "div",
@@ -195,6 +195,7 @@
 	      "classList": [
 	        "m-comment"
 	      ],
+	      "id": "m-comment",
 	      "children": [
 	        {
 	          "type": "div",
@@ -203,51 +204,43 @@
 	          ],
 	          "children": [
 	            {
-	              "type": "scroller",
-	              "shown": function () {return this.marquee},
+	              "type": "list",
+	              "classList": [
+	                "cb-list"
+	              ],
 	              "children": [
 	                {
-	                  "type": "wxc-marquee",
-	                  "id": "marquee",
-	                  "style": {
-	                    "width": 750,
-	                    "height": function () {return this.marquee.height*10},
-	                    "borderRadius": 8,
-	                    "paddingLeft": 30,
-	                    "paddingRight": 30
+	                  "type": "cell",
+	                  "append": "tree",
+	                  "repeat": {
+	                    "expression": function () {return this.marquee.list},
+	                    "value": "mqi"
 	                  },
-	                  "attr": {
-	                    "step": function () {return this.marquee.height*2},
-	                    "count": function () {return this.marquee.list.length},
-	                    "interval": function () {return this.marquee.interval},
-	                    "duration": function () {return this.marquee.duration}
-	                  },
+	                  "classList": [
+	                    "cbl-li"
+	                  ],
 	                  "children": [
 	                    {
-	                      "type": "div",
-	                      "repeat": {
-	                        "expression": function () {return this.marquee.list},
-	                        "value": "mqi"
-	                      },
+	                      "type": "text",
 	                      "style": {
-	                        "height": function () {return this.marquee.height*this.marquee.length},
-	                        "paddingTop": function () {return this.marquee.height*0.5},
-	                        "paddingBottom": function () {return this.marquee.height*0.5},
-	                        "overflow": "hidden"
+	                        "height": function () {return this.marquee.height},
+	                        "color": "#777777",
+	                        "fontSize": 30
 	                      },
-	                      "children": [
-	                        {
-	                          "type": "text",
-	                          "style": {
-	                            "height": function () {return this.marquee.height},
-	                            "color": "#777777",
-	                            "fontSize": 28
-	                          },
-	                          "attr": {
-	                            "value": function () {return (this.mqi.userId) + ': ' + (this.mqi.text)}
-	                          }
-	                        }
-	                      ]
+	                      "attr": {
+	                        "value": function () {return (this.mqi.userId) + ':'}
+	                      }
+	                    },
+	                    {
+	                      "type": "text",
+	                      "style": {
+	                        "height": function () {return this.marquee.height},
+	                        "color": "#777777",
+	                        "fontSize": 30
+	                      },
+	                      "attr": {
+	                        "value": function () {return this.mqi.text}
+	                      }
 	                    }
 	                  ]
 	                }
@@ -268,6 +261,7 @@
 	                "cc-input"
 	              ],
 	              "events": {
+	                "focus": "onfocus",
 	                "input": "commentInput"
 	              },
 	              "attr": {
@@ -304,21 +298,26 @@
 	      },
 	      "children": [
 	        {
-	          "type": "image",
-	          "classList": [
-	            "s-img"
-	          ],
+	          "type": "div",
 	          "repeat": {
 	            "expression": function () {return this.sliderList},
 	            "value": "sli"
 	          },
-	          "attr": {
-	            "src": function () {return this.sli.src}
-	          },
-	          "events": {
-	            "click": "goWeexSite"
-	          },
-	          "id": function () {return 'sli-' + (this.$index)}
+	          "children": [
+	            {
+	              "type": "image",
+	              "classList": [
+	                "s-img"
+	              ],
+	              "attr": {
+	                "src": function () {return this.sli.src}
+	              },
+	              "events": {
+	                "click": "goWeexSite"
+	              },
+	              "id": function () {return 'sli-' + (this.$index)}
+	            }
+	          ]
 	        },
 	        {
 	          "type": "indicator",
@@ -434,6 +433,17 @@
 	    "color": "#dddddd",
 	    "padding": 20
 	  },
+	  "cb-list": {
+	    "width": 750,
+	    "height": 340,
+	    "flexDirection": "column",
+	    "padding": 20
+	  },
+	  "cbl-li": {
+	    "flexDirection": "row",
+	    "flexWrap": "wrap",
+	    "height": 50
+	  },
 	  "c-comment": {
 	    "flexDirection": "row",
 	    "justifyContent": "space-between",
@@ -466,6 +476,9 @@
 	    "height": 360
 	  },
 	  "indicator": {
+	    "position": "absolute",
+	    "top": 0,
+	    "left": 0,
 	    "width": 750,
 	    "height": 640,
 	    "itemColor": "#fff",
@@ -497,6 +510,7 @@
 	module.exports = function(module, exports, __weex_require__){'use strict';
 
 	var modal = __weex_require__('@weex-module/modal');
+	var dom = __weex_require__('@weex-module/dom');
 
 	__webpack_require__(4);
 
@@ -510,13 +524,13 @@
 
 			currentComment: '',
 			marquee: {
-				height: 30,
+				height: 50,
 				duration: 1000,
 				interval: 1000,
 				list: []
 			},
 
-			intervalValue: "1000",
+			intervalValue: "2000",
 			isAutoPlay: "true",
 			sliderList: [{
 				id: 0,
@@ -554,7 +568,7 @@
 		created: function created() {},
 		ready: function ready() {
 			this.initMarquee('marquee');
-			window.a = this;
+			window.v = this;
 		},
 		methods: {
 			redirect: function redirect() {},
@@ -583,6 +597,13 @@
 				});
 			},
 
+			onfocus: function onfocus(e) {
+				console.log(e);
+				var el = this.$el('m-comment');
+				dom.scrollToElement(el, {
+					offset: 0
+				});
+			},
 			commentInput: function commentInput(e) {
 				var self = this;
 				self.currentComment = e.value;
@@ -603,6 +624,9 @@
 				var arr = [{ userId: 'userId', text: 'Introducing Bots on Messenger' }, { userId: 'userId', text: 'Capturing 3D 360-Stereo VR Video' }, { userId: 'userId', text: 'The Future of Video on Facebook' }, { userId: 'userId', text: 'Announcing Vue.js 2.0' }, { userId: 'userId', text: 'Not Your Average Virtual-DOM' }, { userId: 'userId', text: 'Templates, JSX, or Hyperscript?' }];
 				setInterval(function () {
 					self.marquee.list.push({ userId: 'userId', text: Math.random() });
+					if (self.marquee.list.length > 6) {
+						self.marquee.list.shift();
+					}
 				}, 1000);
 			},
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <scroller>
 
     <div class="m-live">
       <video class="l-video" onstart="onstart" onpause="onpause" onfinish="onfinish" onfail="onfail"
@@ -21,25 +21,20 @@
     	    	
     	    		
     	    				
-    <div class="m-comment">
+    <div class="m-comment" id="m-comment">
       <div class="c-board">
-      
-  <scroller if="{{marquee}}">
-<!--    <wxc-panel title="Marquee" type="primary">-->
-      <wxc-marquee id="marquee" style="width: 750; height: {{marquee.height * 10}}; border-radius: 8; padding-left: 30; padding-right: 30;" step="{{marquee.height * 2}}" count="{{marquee.list.length}}" interval="{{marquee.interval}}" duration="{{marquee.duration}}">
-        <div repeat="mqi in marquee.list" style="height: {{marquee.height * marquee.length}}; padding-top: {{marquee.height * 0.5}}; padding-bottom: {{marquee.height * 0.5}}; overflow: hidden;">
-         
-          <text style="height: {{marquee.height}}; color: #777; font-size: 28;">{{mqi.userId}}: {{mqi.text}}</text>
-        </div>
-      </wxc-marquee>
-<!--    </wxc-panel>-->
-  </scroller>
-     
+				<list class="cb-list">
+					<cell repeat="mqi in marquee.list" class="cbl-li">
+						<text style="height: {{marquee.height}}; color: #777; font-size: 30;" >{{mqi.userId}}: </text>
+						<text style="height: {{marquee.height}}; color: #777; font-size: 30;">{{mqi.text}}</text>
+					</cell>
+				</list>
       </div>
       <div class="c-comment">
         <input
          	id="cc-input"
           class="cc-input"
+					onfocus="onfocus"
           oninput="commentInput"
            type="text"
            placeholder="发评论赢新品"
@@ -50,11 +45,13 @@
         <text class="cc-btn" onclick="commentBtn">发表</text>
       </div>
     </div>
-
-
 		
+
+
 		<slider class="m-slider" interval="{{intervalValue}}" auto-play="{{isAutoPlay}}">
-			<image class="s-img" repeat="sli in sliderList" src="{{sli.src}}" onclick="goWeexSite"  id="sli-{{$index}}"></image>
+			<div repeat="sli in sliderList">
+				<image class="s-img"  src="{{sli.src}}" onclick="goWeexSite"  id="sli-{{$index}}"></image>
+			</div>
 			<indicator class="indicator"></indicator>
 		</slider>
 
@@ -74,7 +71,7 @@
         
     
     
-  </div>
+  </scroller>
 </template>
 <style>
 	.l-title{flex-direction:row;justify-content:space-between;background-color: #333;padding: 20px;}
@@ -85,14 +82,15 @@
 	.ltr-l{color: #ddd;padding: 20px;}
 	.ltr-r{color: #ddd;padding: 20px;}
 	
-	
+	.cb-list{width:750;height:340;flex-direction:column;padding:20;}
+	.cbl-li{flex-direction:row;flex-wrap: wrap;height:50}
   .c-comment{flex-direction:row;justify-content:space-between;background-color: #eee;}
   .cc-input{background-color: #fff;flex:3;font-size: 30px;margin: 20px;margin-right: 0;padding: 15px;border: 1px solid #ccc;}
   .cc-btn{background-color: #ccc;flex:1;font-size: 30px;line-height: 60px;text-align: center;margin:20px;}
   
 	.m-slider{width: 750px;height: 360px;flex-direction: row;}
 	.s-img{width: 750px;height: 360px;}
-	.indicator {width: 750px;height: 640px;item-color: #fff;item-selectedColor: #666;item-size: 20;}
+	.indicator {position:absolute;top:0;left:0;width: 750px;height: 640px;item-color: #fff;item-selectedColor: #666;item-size: 20;}
 	
 	
 	
@@ -104,7 +102,8 @@
 	
 	// 弹窗组件用
 	var modal = require('@weex-module/modal');
-	// 评论组件
+	var dom = require('@weex-module/dom');
+	// 评论 倒计时 组件
 	require('weex-components');
 	
   module.exports ={
@@ -123,13 +122,13 @@
 			
 			currentComment:'',
 			marquee: {
-        height: 30,
+        height: 50,
         duration: 1000,
         interval: 1000,
         list: []
       },
 			// slider
-			intervalValue:"1000",
+			intervalValue:"2000",
       isAutoPlay:"true",
 			sliderList:[
 				{
@@ -178,7 +177,7 @@
     },
 		ready: function() {
       this.initMarquee('marquee');
-			window.a = this;
+			window.v = this;
     },
     methods:{
 			redirect: function() {
@@ -211,6 +210,13 @@
 				});
 			},
 			// comment
+			onfocus: function(e){
+				console.log(e);
+				var el = this.$el('m-comment')
+				dom.scrollToElement(el, {
+					offset: 0
+				})
+			},
 			commentInput: function(e){
 				const self = this;
 				self.currentComment=e.value;
@@ -239,6 +245,10 @@
         ];
 				setInterval(function(){
 					self.marquee.list.push({userId:'userId',text: Math.random()});
+					if(self.marquee.list.length>6){
+						self.marquee.list.shift();
+					}
+					// addElement(parentNode, element, index);
 				},1000);
 				
 //        var $marquee = this.$vm(id);
