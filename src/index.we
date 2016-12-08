@@ -17,6 +17,15 @@
       </div>
     </div>
     	    
+
+			<wxc-countdown id="countdown1" remain="{{countdown1.remain}}"
+                     style="width:750; margin-top: 20; margin-bottom: 20;text-align:center;">
+				<text>
+			距离直播(2016/12/12,12:00:00)还有{{countdown1.time.D}}天{{countdown1.time.hh}}时{{countdown1.time.mm}}分{{countdown1.time.ss}}秒
+				</text>
+      </wxc-countdown>
+
+		
     <div class="btn" onClick="toggle"><text style="text-align:center;background-color: #ddd;">toggle 实际人数{{viewer}}</text></div>
     	    	
     	    		
@@ -92,31 +101,42 @@
 	.s-img{width: 750px;height: 360px;}
 	.indicator {position:absolute;top:0;left:0;width: 750px;height: 640px;item-color: #fff;item-selectedColor: #666;item-size: 20;}
 	
-	
-	
 	.m-product-list2{flex-direction:row;flex-wrap: wrap;align-content:space-around;padding-left: 10px;padding-bottom: 10px;}
 	.pl2-item{margin: 10px;margin-left: 0;margin-bottom: 0;}
 	.pl2i-img{width: 360px;height: 360px;}
 </style>
 <script>
 	
-	// 弹窗组件用
 	var modal = require('@weex-module/modal');
 	var dom = require('@weex-module/dom');
-	// 评论 倒计时 组件
 	require('weex-components');
 	
   module.exports ={
     data: {
 			
-			root: '',
-			items: [
-        // FORMAT:
-        // `name` key is the example filename without '.we'
-        // Support sub directory, e.g. 'new-fashion/index'
-        {name: 'popup/rule', title: 'rule', url: ''}
+			// 倒计时
+			liveStartTime: new Date("2016/12/12, 12:00:00"),
+			countdown1: {
+				// 秒数
+        remain: parseInt((new Date("2016/12/12, 12:00:00") - new Date())/1000),
+        time: {
+          D: '0',
+          hh: '00',
+          mm: '00',
+          ss: '00'
+        }
+      },
 
-      ],
+
+			// tiaozhuan
+			// root: '',
+			// items: [
+      //   // FORMAT:
+      //   // `name` key is the example filename without '.we'
+      //   // Support sub directory, e.g. 'new-fashion/index'
+      //   {name: 'popup/rule', title: 'rule', url: ''}
+
+      // ],
 			
 			viewer: 0,
 			
@@ -177,10 +197,26 @@
     },
 		ready: function() {
       this.initMarquee('marquee');
+			this.initCountdown('countdown1');
+      this.initCountdown('countdown2');
 			window.v = this;
     },
     methods:{
 			redirect: function() {
+      },
+
+			// countdown
+			initCountdown: function(id) {
+        var self = this;
+
+        var $countdown = this.$vm(id);
+        $countdown.$on('tick', function(e) {
+          Object.assign(self[id].time, e.detail);
+        });
+
+        $countdown.$on('alarm', function(e) {
+          Object.assign(self[id].time, e.detail);
+        });
       },
 			// popup
 			showMyPrize:function(){
